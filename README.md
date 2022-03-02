@@ -1,4 +1,4 @@
-# Petwitter - Frontend - Versão incial
+# Petwitter - Backend - Versão incial
 
 
 ## Tecnologias
