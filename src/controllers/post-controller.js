@@ -1,28 +1,74 @@
 import { prisma } from "../helpers/utils.js";
-import { format, render, cancel, register } from "timeago.js";
 
 export const index = async (req, res) => {
-  try {
-    let posts = await prisma.post.findMany({
-      include: {
-        author: {
-          select: {
-            name: true,
-            username: true,
-            profile: {
-              select: { avatar_url: true },
+  const { id } = req.query;
+  const { take, skip, page } = req.pagination;
+
+  if (id) {
+    try {
+      const postsCount = await prisma.post.count({
+        where: {
+          authorId: Number(id),
+        },
+      });
+      let posts = await prisma.post.findMany({
+        take,
+        skip,
+        where: {
+          authorId: Number(id),
+        },
+        include: {
+          author: {
+            select: {
+              name: true,
+              username: true,
+              profile: {
+                select: { avatar_url: true },
+              },
             },
           },
         },
-      },
-      orderBy: {
-        created_at: "desc",
-      },
-    });
-    return res.send(posts);
-  } catch (error) {
-    console.error("posts", error);
-    res.status(500).send({ error: `Cannot fetch posts` });
+        orderBy: {
+          created_at: "desc",
+        },
+      });
+      return res.send({
+        posts,
+        pagination: { page, pageCount: Math.ceil(postsCount / take) },
+      });
+    } catch (error) {
+      console.error("users", error);
+      res.status(404).send({ error: `Cannot fetch posts` });
+    }
+  } else {
+    try {
+      const postsCount = await prisma.post.count();
+      let posts = await prisma.post.findMany({
+        take,
+        skip,
+        include: {
+          author: {
+            select: {
+              name: true,
+              username: true,
+              profile: {
+                select: { avatar_url: true },
+              },
+            },
+          },
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+      });
+      return res.send({
+        posts,
+        pagination: { page, pageCount: Math.ceil(postsCount / take) },
+      });
+    } catch (error) {
+      console.error("posts", error);
+      res.status(500).send({ error: `Cannot fetch posts` });
+    }
   }
 };
 
