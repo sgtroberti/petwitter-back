@@ -11,8 +11,29 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  name    String?  @db.VarChar(255)
-  email   String   @unique @db.VarChar(255)
-  password String
+  id        Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(255)
+  username  String   @db.VarChar(255) @unique
+  email     String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now())
+  password  String
+  profile   Profile?
+  posts     Post[]
+}
+
+model Profile {
+  id          Int         @id @default(autoincrement())
+  avatar_url  String?     @db.VarChar(255)
+  bg_url      String?     @db.VarChar(255)
+  bio         String?
+  user        User        @relation(fields: [userId], references: [id])
+  userId      Int
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    Int
+  created_at  DateTime  @default(now())
+  content     String    @db.VarChar(140)
 }
