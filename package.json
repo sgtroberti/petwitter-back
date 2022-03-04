@@ -2,15 +2,15 @@
   "name": "boilerplate-back-end",
   "version": "1.0.0",
   "main": "src/index.js",
-  "repository": "git@github.com:OtterwiseCo/boilerplate-back-end.git",
-  "author": "João Pedro Bretanha <joaopedro@nave.rs>",
+  "repository": "git@github.com:sgtroberti/petwitter-back.git",
+  "author": "Guilherme Roberti <devroberti@gmail.com>",
   "license": "MIT",
   "type": "module",
   "prisma": {
     "seed": "node prisma/seed.js"
   },
   "scripts": {
-    "start": "node src/server.js",
+    "start": "npx prisma migrate deploy && npx prisma db seed && node src/index.js",
     "dev": "nodemon src/server.js",
     "db:push": "npx prisma db push",
     "db:seed": "npx prisma db seed",
